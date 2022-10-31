@@ -87,7 +87,7 @@ QChart *Widget::createScatterChart_trj()
 
    for (int i = 0; i < ne; i++) {
       series.append(new QScatterSeries());
-      series[i]->setUseOpenGL(true);
+      series[i]->setUseOpenGL(true);      
    }
 
    xAxis = new QValueAxis; // Ось X
@@ -140,7 +140,7 @@ QChart *Widget::createScatterChart_phs()
 
    for (int i = 0; i < ne; i++) {
       series.append(new QScatterSeries());
-      series[i]->setUseOpenGL(true);
+      series[i]->setUseOpenGL(true);      
    }
 
    xAxis = new QValueAxis; // Ось X
@@ -198,6 +198,7 @@ void Widget::paintGraph()
 {
    static int j;
    j = *it;
+   QColor green(Qt::green);
 
    if (phase_space == 0) {
       yAxis->setRange((*ymin) - 0.2, (*ymax) + 0.2);
@@ -205,6 +206,7 @@ void Widget::paintGraph()
       for (int i = 0; i < ne; i++) {
          if (draw_trajectories == 0)
             series[i]->clear();
+         series[i]->setBrush(green);
          series[i]->append(z[j], th[j][i]);
       }
    } else {
@@ -214,6 +216,7 @@ void Widget::paintGraph()
       for (int i = 0; i < ne; i++) {
          if (draw_trajectories == 0)
             series[i]->clear();
+         series[i]->setBrush(green);
          series[i]->append(th[j][i], dth[j][i]);
       }
    }
