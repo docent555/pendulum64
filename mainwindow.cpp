@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
    thread = new QThread();
 
    this->setCentralWidget(widget);
-   this->resize(1300, 800);
+   this->resize(1300, 700);
 
    // Запуск выполнения метода run будет осуществляться по сигналу запуска от соответствующего потока
    //   connect(thread, &QThread::started, r, &Rkn::calculate);
@@ -69,17 +69,24 @@ void MainWindow::closeEvent(QCloseEvent *event)
       double **dth = r->get_dtheta();
       //      QString result, dir_a = dir, dir_k = dir;
       QString result;
+      QTextStream ts(&result);
+      ts.setFieldWidth(10);
+      ts.setFieldAlignment(QTextStream::AlignRight);
       //      QString fileName_a = dir_a.append("\\").append("a.dat");
       QFile file_tr(fileName);
 
       if (file_tr.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
          for (int i = 0; i < nz; i++) {
-            QTextStream(&result) << z[i] << '\t';
+            //            QTextStream(&result) << << z[i] << "\t\t";
+            ts << z[i] << ' ';
             for (int j = 0; j < ne; j++)
-               QTextStream(&result) << th[i][j] << '\t';
+               //               QTextStream(&result) << th[i][j] << "\t\t";
+               ts << th[i][j] << ' ';
             for (int j = 0; j < ne; j++)
-               QTextStream(&result) << dth[i][j] << '\t';
-            QTextStream(&result) << '\n';
+               //               QTextStream(&result) << dth[i][j] << "\t\t";
+               ts << dth[i][j] << ' ';
+            //            QTextStream(&result) << '\n';
+            ts << '\n';
          }
          file_tr.write(result.toUtf8());
          file_tr.close();

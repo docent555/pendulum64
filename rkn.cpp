@@ -55,15 +55,11 @@ Rkn::Rkn(QObject *parent) : QObject(parent), ic(0.0, 1.0)
    //****************************************************************************************//
    //							 Массивы для A(z), th(z,th0), dthdz(z,th0)
    //****************************************************************************************//
-   th0 = new double *[NZ];
-   dthdz0 = new double *[NZ];
-   th1 = new double *[NZ];
-   dthdz1 = new double *[NZ];
+   th = new double *[NZ];
+   dthdz = new double *[NZ];
    for (int i = 0; i < NZ; i++) {
-      th0[i] = new double[Ne];
-      dthdz0[i] = new double[Ne];
-      th1[i] = new double[Ne];
-      dthdz1[i] = new double[Ne];
+      th[i] = new double[Ne];
+      dthdz[i] = new double[Ne];
    }
    F0 = new double[Ne];
    z = new double[NZ];
@@ -117,14 +113,25 @@ void Rkn::calculate()
    //****************************************************************************************//
 
    for (int k = 0; k < Ne; k++) {
-      for (int i = 0; i < NZ; i++) {
-         th0[i][k] = hth * k;
-         dthdz0[i][k] = 0.0;
+      th[0][k] = hth * k - M_PI / 2.0;
+      dthdz[0][k] = delta;
+      for (int i = 1; i < NZ; i++) {
+         th[i][k] = 0.0;
+         dthdz[i][k] = 0.0;
       }
-
-      th1[0][k] = hth * k;
-      dthdz1[0][k] = delta;
    }
+
+   for (int k = 0; k < Ne; k++) {
+      qDebug() << th[0][k];
+   }
+   qDebug() << "h = " << h;
+
+   ofstream f;
+   f.open("test.dat");
+   for (int i = 0; i < Ne; i++) {
+      f << i << ' ' << th[0][i] << '\n';
+   }
+   f.close();
 
    //========================================================================================//
    //						   / Начальные условия
@@ -132,30 +139,26 @@ void Rkn::calculate()
 
    for (int i = 0; i < NZ - 1; i++) {
       for (int k = 0; k < Ne; k++) {
-         F0[k] = F(A, th1[i][k] /*, dthdz1[i][k]*/);
+         F0[k] = F(th[i][k]);
 
          //Предиктор th
-         th1[i + 1][k] = th1[i][k] + dthdz1[i][k] * h + h / 2.0 * F0[k] * h;
+         th[i + 1][k] = th[i][k] + dthdz[i][k] * h + h / 2.0 * F0[k] * h;
          //Предиктор dthdz
-         dthdz1[i + 1][k] = dthdz1[i][k] + h * F0[k];
-      }
-
-      for (int k = 0; k < Ne; k++) {
+         dthdz[i + 1][k] = dthdz[i][k] + h * F0[k];
          //Корректор th
-         th1[i + 1][k] = th1[i][k] + dthdz1[i][k] * h + h / 6.0 * F0[k] * h
-                         + h / 3.0 * F(A, th1[i + 1][k] /*, dthdz1[i + 1][k]*/) * h;
+         th[i + 1][k] = th[i][k] + dthdz[i][k] * h + h / 6.0 * F0[k] * h
+                        + h / 3.0 * F(th[i + 1][k]) * h;
          //Корректор dthdz
-         dthdz1[i + 1][k] = dthdz1[i][k]
-                            + h / 2.0 * (F0[k] + F(A, th1[i + 1][k] /*, dthdz1[i + 1][k]*/));
+         dthdz[i + 1][k] = dthdz[i][k] + h / 2.0 * (F0[k] + F(th[i + 1][k]));
 
-         if (th1[i + 1][k] < thmin)
-            thmin = th1[i + 1][k];
-         if (th1[i + 1][k] > thmax)
-            thmax = th1[i + 1][k];
-         if (dthdz1[i + 1][k] < dthmin)
-            dthmin = dthdz1[i + 1][k];
-         if (dthdz1[i + 1][k] > dthmax)
-            dthmax = dthdz1[i + 1][k];
+         if (th[i + 1][k] < thmin)
+            thmin = th[i + 1][k];
+         if (th[i + 1][k] > thmax)
+            thmax = th[i + 1][k];
+         if (dthdz[i + 1][k] < dthmin)
+            dthmin = dthdz[i + 1][k];
+         if (dthdz[i + 1][k] > dthmax)
+            dthmax = dthdz[i + 1][k];
       }
 
       it = i + 1;
@@ -183,19 +186,9 @@ void Rkn::calculate()
 //							 Functions
 //****************************************************************************************//
 
-inline double Rkn::F(complex<double> A, double th)
+inline double Rkn::F(double th)
 {
    return real(A * exp(ic * th));
-}
-
-inline complex<double> Rkn::J(double *th, int Ne)
-{
-   complex<double> sum = 0;
-
-   for (int k = 0; k < Ne; k++)
-      sum += exp(-ic * th[k]);
-
-   return 2.0 / Ne * sum;
 }
 
 //========================================================================================//

@@ -2,7 +2,6 @@
 #define RKN_H
 
 #include <complex>
-#include <QEventLoop>
 #include <QObject>
 #include <QString>
 
@@ -27,8 +26,7 @@ class Rkn : public QObject
    int NZ, Ne, phase_space, draw_trajectories;
    int it; // текущий момент времени
    complex<double> *A0, *A1, *J0, *Az0, *AzL;
-   double **th0, **dthdz0, **th1, **dthdz1, thmin = 1000, thmax = -1000, dthmin = 1000,
-                                            dthmax = -1000;
+   double **th, **dthdz, thmin = 1000, thmax = -1000, dthmin = 1000, dthmax = -1000;
    double *F0;
    double *z;
    QString *dir;
@@ -47,8 +45,8 @@ public:
    double *getz() { return z; }
    int getnz() { return NZ; }
    int *getit() { return &it; }
-   double **get_theta() { return th1; }
-   double **get_dtheta() { return dthdz1; }
+   double **get_theta() { return th; }
+   double **get_dtheta() { return dthdz; }
    double *get_thmin() { return &thmin; }
    double *get_thmax() { return &thmax; }
    double *get_dthmin() { return &dthmin; }
@@ -70,8 +68,7 @@ public slots:
    void setStop(bool calculating);
 
 private:
-   inline double F(complex<double> A, double th);
-   inline complex<double> J(double *th, int Ne);
+   inline double F(double th);
 };
 
 #endif // RKN_H

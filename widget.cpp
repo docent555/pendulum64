@@ -32,10 +32,6 @@
 
 #include <QDebug>
 #include <QGridLayout>
-#include <QValueAxis>
-
-//#define _USE_MATH_DEFINES
-//#include <math.h>
 
 Widget::Widget(Rkn *r, QWidget *parent)
     : QWidget(parent), m_listCount(3), m_valueMax(10), m_valueCount(7)

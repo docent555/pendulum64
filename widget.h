@@ -33,9 +33,12 @@
 #include "rkn.h"
 
 #include <QChartView>
-#include <QList>
 #include <QScatterSeries>
 #include <QValueAxis>
+
+#if QT_VERSION < 0x060000
+QT_CHARTS_USE_NAMESPACE
+#endif
 
 class Widget : public QWidget
 {
