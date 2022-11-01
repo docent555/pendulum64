@@ -126,12 +126,12 @@ void Rkn::calculate()
    }
    qDebug() << "h = " << h;
 
-   ofstream f;
-   f.open("test.dat");
-   for (int i = 0; i < Ne; i++) {
-      f << i << ' ' << th[0][i] << '\n';
-   }
-   f.close();
+   //   ofstream f;
+   //   f.open("test.dat");
+   //   for (int i = 0; i < Ne; i++) {
+   //      f << i << ' ' << th[0][i] << '\n';
+   //   }
+   //   f.close();
 
    //========================================================================================//
    //						   / Начальные условия
