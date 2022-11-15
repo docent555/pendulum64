@@ -4,16 +4,21 @@
 #include <QDebug>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QMutex>
+#include <QMutexLocker>
 #include <QString>
+
+extern QMutex mx;
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
    r = new Rkn();
    widget = new Widget(r);
    thread = new QThread();
+   pause = 0;
 
    this->setCentralWidget(widget);
-   this->resize(1300, 700);
+   this->resize(800, 800);
 
    // Запуск выполнения метода run будет осуществляться по сигналу запуска от соответствующего потока
    //   connect(thread, &QThread::started, r, &Rkn::calculate);
@@ -36,8 +41,23 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
    //    thread.start();
 }
 
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+   if (event->key() == Qt::Key_Space) {
+      if (pause == 0) {
+         mx.lock();
+         pause++;
+      } else {
+         mx.unlock();
+         pause--;
+      }
+   }
+}
+
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+   //   QMutexLocker ml(&mx);
+   mx.tryLock();
    QMessageBox::StandardButton resBtn = QMessageBox::question(this,
                                                               " ",
                                                               tr("Сохранить траектории?\n"),
@@ -45,18 +65,11 @@ void MainWindow::closeEvent(QCloseEvent *event)
                                                               QMessageBox::No);
 
    if (resBtn != QMessageBox::Yes) {
-      r->setCalculating(false);
-      //        thread.wait(100);
-      //        event->ignore();
+      r->setCalculating(false);      
       event->accept();
    } else {
       r->setStop(true);
 
-      //      QString dir = QFileDialog::getExistingDirectory(this,
-      //                                                      tr("Open Directory"),
-      //                                                      "./",
-      //                                                      QFileDialog::ShowDirsOnly
-      //                                                          | QFileDialog::DontResolveSymlinks);
       QString fileName = QFileDialog::getSaveFileName(this,
                                                       tr("Save File"),
                                                       "results.dat",
@@ -118,6 +131,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
       //        thread.wait(100);
       event->accept();
    }
+   mx.unlock();
 }
 
 MainWindow::~MainWindow() {}

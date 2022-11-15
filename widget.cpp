@@ -54,12 +54,20 @@ Widget::Widget(Rkn *r, QWidget *parent)
       *xmin = 0;
       xmax = &z[nz - 1];
       chartView = new QChartView(createScatterChart_trj());
+      QSize min(300, 300);
+      QSize max(900, 900);
+      chartView->setMinimumSize(min);
+      chartView->setMaximumSize(max);
    } else {
       ymin = r->get_dthmin();
       ymax = r->get_dthmax();
       xmin = r->get_thmin();
       xmax = r->get_thmax();
       chartView = new QChartView(createScatterChart_phs());
+      QSize min(300, 300);
+      QSize max(900, 900);
+      chartView->setMinimumSize(min);
+      chartView->setMaximumSize(max);
    }
    baseLayout->addWidget(chartView, 0, 0);
    m_charts << chartView;
@@ -83,7 +91,7 @@ QChart *Widget::createScatterChart_trj()
 
    for (int i = 0; i < ne; i++) {
       series.append(new QScatterSeries());
-      series[i]->setUseOpenGL(true);      
+      //      series[i]->setUseOpenGL(true);
    }
 
    xAxis = new QValueAxis; // Ось X

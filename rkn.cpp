@@ -17,6 +17,10 @@
 #include "dialog.h"
 #include "rkn.h"
 #include <QDir>
+#include <QMutex>
+#include <QMutexLocker>
+
+QMutex mx;
 
 Rkn::Rkn(QObject *parent) : QObject(parent), ic(0.0, 1.0)
 {
@@ -108,6 +112,7 @@ void Rkn::setStop(bool stop)
 
 void Rkn::calculate()
 {
+   //   QMutexLocker ml(&mx);
    //****************************************************************************************//
    //						     Начальные условия
    //****************************************************************************************//
@@ -137,7 +142,7 @@ void Rkn::calculate()
    //						   / Начальные условия
    //========================================================================================//
 
-   for (int i = 0; i < NZ - 1; i++) {
+   for (int i = 0; i < NZ - 1; i++) {     
       for (int k = 0; k < Ne; k++) {
          F0[k] = F(th[i][k]);
 
@@ -163,6 +168,9 @@ void Rkn::calculate()
 
       it = i + 1;
       emit paintSignal();
+      QMutexLocker ml(&mx);
+      //      mx.lock();
+      //      mx.unlock();
    }
 
    if (m_stop) {

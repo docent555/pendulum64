@@ -1,8 +1,9 @@
 #ifndef DIALOG_H
 #define DIALOG_H
 
-#include <QDialog>
+#include "rkn.h"
 #include <fstream>
+#include <QDialog>
 
 using namespace std;
 

@@ -10,22 +10,24 @@
 class MainWindow : public QMainWindow
 {
    Q_OBJECT
-   public:
+public:
    explicit MainWindow(QWidget *parent = nullptr);
    ~MainWindow();
 
-   protected:
+protected:
    void closeEvent(QCloseEvent *) override;
+   void keyPressEvent(QKeyEvent *) override;
 
-   private:
+private:
    QThread *thread;
    Rkn *r;
    Widget *widget;
+   int pause;
 
-   signals:
+signals:
    //    void freeEventLoop();
 
-   public slots:
+public slots:
 };
 
 #endif // MAINWINDOW_H
