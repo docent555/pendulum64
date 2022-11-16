@@ -118,7 +118,8 @@ void Rkn::calculate()
    //****************************************************************************************//
 
    for (int k = 0; k < Ne; k++) {
-      th[0][k] = hth * k - M_PI / 2.0;
+      th[0][k] = hth * k;
+      //      th[0][k] = hth * k - M_PI / 2.0;
       dthdz[0][k] = delta;
       for (int i = 1; i < NZ; i++) {
          th[i][k] = 0.0;
@@ -196,7 +197,8 @@ void Rkn::calculate()
 
 inline double Rkn::F(double th)
 {
-   return real(A * exp(ic * th));
+   //   return real(A * exp(ic * th));
+   return imag(A * exp(ic * th));
 }
 
 //========================================================================================//
