@@ -51,6 +51,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
          mx.unlock();
          pause--;
       }
+   } else if (event->key() == Qt::Key_Escape) {
+      this->close();
    }
 }
 
