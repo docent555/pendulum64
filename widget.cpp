@@ -91,7 +91,7 @@ QChart *Widget::createScatterChart_trj()
 
    for (int i = 0; i < ne; i++) {
       series.append(new QScatterSeries());
-      //      series[i]->setUseOpenGL(true);
+      series[i]->setUseOpenGL(true);
    }
 
    xAxis = new QValueAxis; // Ось X

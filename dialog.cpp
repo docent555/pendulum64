@@ -80,7 +80,7 @@ void Dialog::on_pushButton_OK_clicked()
      << phase_space << endl
      << draw_trajectories << endl;
 
-   qDebug() << phase_space << draw_trajectories;
+   qDebug() << "phase_space: " << phase_space << "draw_trajectories: " << draw_trajectories;
 
    f.close();
 
